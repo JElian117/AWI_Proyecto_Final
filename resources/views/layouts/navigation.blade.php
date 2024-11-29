@@ -20,6 +20,9 @@
                     <li class="nav-item">
                         <a href="{{ route('albumes.index') }}" class="btn btn-outline-light text-black">Ir a Álbumes</a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('search') }}" class="btn btn-outline-light text-black">Buscar en Spotify</a>
+                    </li>
                 @endif
             </ul>
 

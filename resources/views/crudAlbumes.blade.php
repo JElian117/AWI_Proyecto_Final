@@ -61,7 +61,7 @@
                             <label for="artist_id" class="form-label">Artista</label>
                             <select class="form-select" id="artist_id" name="artist_id" required>
                                 @foreach ($artistas as $artista)
-                                    <option value="{{ $artista->id }}">{{ $artista->name }}</option>
+                                    <option value="{{ $artista->id }}">{{ $artista->name }}</option> <!-- Cambiado a 'name' -->
                                 @endforeach
                             </select>
                         </div>
