@@ -43,6 +43,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/albumes/editar/{id}', [albumesController::class, 'edit'])->name('albumes.edit');
     Route::put('/albumes/actualizar/{id}', [albumesController::class, 'update'])->name('albumes.update');
     Route::delete('/albumes/eliminar/{id}', [albumesController::class, 'delete'])->name('albumes.delete');
+    Route::post('/albumes/reviews', [albumesController::class, 'storeReview'])->name('reviews.store');
+
 });
 
 require __DIR__.'/auth.php';

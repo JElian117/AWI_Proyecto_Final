@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Album;
 use App\Models\Artista;
+use App\Models\Review;
 
 class albumesController extends Controller
 {
@@ -66,5 +67,25 @@ class albumesController extends Controller
         $album = Album::find($id);
         $album->delete();
         return redirect()->back();
+    }
+
+    public function storeReview(Request $request)
+    {
+        $request->validate([
+            'album_id' => 'required|exists:albums,id',
+            'review' => 'required|string|max:500',
+        ]);
+
+        // Obtener el usuario autenticado
+        $userId = auth()->id();
+
+        // Guardar la reseña
+        Review::create([
+            'album_id' => $request->album_id,
+            'user_id' => $userId,
+            'review' => $request->review,
+        ]);
+
+        return redirect()->back()->with('success', 'Reseña guardada con éxito.');
     }
 }

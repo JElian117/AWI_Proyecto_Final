@@ -27,14 +27,35 @@
                 font-size: 3.5rem;
             }
         }
+
+        .suggestions {
+            border: 1px solid #ccc;
+            background: white;
+            position: absolute;
+            z-index: 1000;
+            width: 100%;
+        }
+
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .suggestion-item:hover {
+            background-color : #f0f0f0;
+        }
     </style>
 </head>
 
 @section('content')
 <body class="bg-dark bg-gradient">
-    <input type="text" id="searchQuery" placeholder="Buscar artista, álbum o canción">
-        <button id="searchButton">Buscar</button>
-    <div id="results"></div>
+    <div class="container mt-4">
+        <div class="input-group">
+            <input type="text" id="searchQuery" class="form-control" placeholder="Buscar artista, álbum o canción">
+                <button class="btn btn-outline-secondary" id="searchButton">Buscar</button>
+        </div>
+        <div class="text-white" id="results"></div>
+    </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
