@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('album_id')->constrained('albums');
             $table->foreignId('user_id')->constrained('users');
             $table->string('review', 500);
+            $table->integer('rating');
             $table->timestamps();
         });
     }

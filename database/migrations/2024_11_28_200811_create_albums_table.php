@@ -14,11 +14,14 @@ return new class extends Migration
         Schema::create('albums', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('uri')->unique(); //URI de Spotify
-            $table->foreignId('artist_id')->constrained('artistas'); //Relación con el artista
+            $table->string('uri')->unique(); // URI de Spotify (Álbum)
+            $table->string('artist_uri'); // Asegúrate de que esto sea un string
             $table->year('release_year')->nullable();
-            $table->string('cover_art')->nullable(); //URL de la portada
+            $table->string('cover_art')->nullable(); // URL de la portada
             $table->timestamps();
+        
+            // Establece la clave foránea después de definir la columna
+            $table->foreign('artist_uri')->references('uri')->on('artistas')->onDelete('cascade');
         });
     }
 

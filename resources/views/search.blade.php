@@ -40,21 +40,35 @@
         <div class="text-white" id="results"></div>
     </div>
 
-    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <!-- Modal para agregar álbum -->
+    <div class="modal fade" id="agregarAlbumModal" tabindex="-1" aria-labelledby="agregarAlbumModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="reviewModalLabel">Escribir Reseña</h5>
+                    <h5 class="modal-title" id="agregarAlbumModalLabel">Agregar Álbum</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="reviewForm">
-                        <input type="hidden" id="albumId" name="album_id">
+                    <form id="agregarAlbumForm" action="/albumes" method="POST">
+                        @csrf
                         <div class="mb-3">
-                            <label for="review" class="form-label">Tu Reseña</label>
-                            <textarea class="form-control" id="review" name="review" rows="3" maxlength="500" required></textarea>
+                            <label for="name" class="form-label">Nombre del Álbum</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Enviar Reseña</button>
+                        <div class="mb-3">
+                            <label for="uri" class="form-label">URI del Álbum</label>
+                            <input type="text" class="form-control" id="uri" name="uri" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="release_year" class="form-label">Año de Lanzamiento</label>
+                            <input type="number" class="form-control" id="release_year" name="release_year" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cover_art" class="form-label">Portada</label>
+                            <input type="text" class="form-control" id="cover_art" name="cover_art">
+                        </div>
+                        <input type="hidden" id="artist_uri" name="artist_uri">
+                        <button type="submit" class="btn btn-primary">Agregar Álbum</button>
                     </form>
                 </div>
             </div>
@@ -62,67 +76,28 @@
     </div>
 
     <script>
-        function openReviewModal(albumUri, artistUri) {
-            // Realizar la llamada AJAX para guardar el artista y el álbum
-            $.ajax({
-                url: '/artistas', // Cambia esto a la ruta correcta para almacenar artistas
-                method: 'POST',
-                data: {
-                    uri: artistUri,
-                    name: 'Nombre del Artista', // Asegúrate de obtener el nombre del artista de la respuesta
-                    _token: $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(artistResponse) {
-                    // Luego guarda el álbum
-                    $.ajax({
-                        url: '/albumes', // Cambia esto a la ruta correcta para almacenar álbumes
-                        method: 'POST',
-                        data: {
-                            uri: albumUri,
-                            name: 'Nombre del Álbum', // Asegúrate de obtener el nombre del álbum de la respuesta
-                            artist_id: artistResponse.id, // Usa la ID del artista que acabas de guardar
-                            release_year: 'Año de lanzamiento', // Asegúrate de obtener el año de lanzamiento de la respuesta
-                            cover_art: 'URL de la portada', // Asegúrate de obtener la URL de la portada de la respuesta
-                            _token: $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function(albumResponse) {
-                    $('#albumId').val(albumResponse.id); // Asigna el ID del álbum guardado
-                    $('#reviewModal').modal('show'); // Mostrar el modal después de guardar el álbum
-                },
-                error: function(error) {
-                    console.error("Error al guardar el álbum: ", error);
-                }
-                    });
-                },
-                error: function(error) {
-                    console.error("Error al guardar el artista: ", error);
-                }
-            });
-        }
-
         function searchSpotify(query) {
             const settings = {
-                    async: true,
-                    crossDomain: true,
-                    url: `https://spotify23.p.rapidapi.com/search/?q=${encodeURIComponent(query)}&type=multi&offset=0&limit=10&numberOfTopResults=5`,
-                    method: 'GET',
-                    headers: {
-                        'x-rapidapi-key': '359b51b6b5msh14fe4ca2e90462ap1005d5jsnbe6d35b7521c',
-                        'x-rapidapi-host': 'spotify23.p.rapidapi.com'
-                    }
-                };
+                async: true,
+                crossDomain: true,
+                url: `https://spotify23.p.rapidapi.com/search/?q=${encodeURIComponent(query)}&type=multi&offset=0&limit=10&numberOfTopResults=5`,
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-key': '359b51b6b5msh14fe4ca2e90462ap1005d5jsnbe6d35b7521c',
+                    'x-rapidapi-host': 'spotify23.p.rapidapi.com'
+                }
+            };
 
-                $.ajax(settings).done(function (response) {
-                    displayResults(response);
-                }).fail(function (error) {
-                    console.error("Error en la búsqueda: ", error);
-                });
+            $.ajax(settings).done(function (response) {
+                displayResults(response);
+            }).fail(function (error) {
+                console.error("Error en la búsqueda: ", error);
+            });
         }
 
         function displayResults(response) {
             const albums = response.albums.items;
             const artists = response.artists.items;
-            const tracks = response.tracks.items;
 
             let output = '<h2>Resultados de búsqueda:</h2>';
 
@@ -138,7 +113,8 @@
                                 <div class="card-body">
                                     <h5 class="card-title">${album.data.name}</h5>
                                     <p class="card-text">Artista: ${album.data.artists.items[0].profile.name}</p>
-                                    <button class="btn btn-success" onclick="openReviewModal('${album.data.uri}', '${album.data.artists.items[0].uri}')">Escribir Reseña</button>
+                                    <button class="btn btn-warning" onclick="registerArtist('${album.data.artists.items[0].uri}', '${album.data.artists.items[0].profile.name}')">Registrar Artista</button>
+                                    <button class="btn btn-success" onclick="registerAlbum('${album.data.uri}', '${album.data.artists.items[0].uri}', '${album.data.artists.items[0].profile.name}', '${album.data.name}', '${album.data.date.year}', '${album.data.coverArt.sources[0].url}')">Registrar Álbum</button>
                                 </div>
                             </div>
                         </div>
@@ -162,23 +138,49 @@
                 output += '</ul>';
             }
 
-            // Mostrar canciones
-            if (tracks.length > 0) {
-                output += '<h3>Canciones:</h3>';
-                output += '<ul>';
-                tracks.forEach(track => {
-                    output += `
-                        <li>
-                            <strong>${track.data.name}</strong> - ${track.data.artists.items[0].profile.name}
-                        </li>
-                    `;
-                });
-                output += '</ul>';
-            }
-
             // Agregar el resultado al DOM
             $('#results').html(output);
         }
+
+        function registerArtist(artistUri, artistName) {
+            $.ajax({
+                url: '/artistas', // Ruta para almacenar artistas
+                method: 'POST',
+                data: {
+                    uri: artistUri,
+                    name: artistName,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    alert('Artista registrado exitosamente.');
+                },
+                error: function(error) {
+                    console.error("Error al guardar el artista: ", error);
+                }
+            });
+        }
+
+        function registerAlbum(albumUri, artistUri, artistName, albumName, releaseYear, coverArtUrl) {
+            $.ajax({
+                url: '/albumes', // Ruta para almacenar álbumes
+                method: 'POST',
+                data: {
+                    uri: albumUri,
+                    name: albumName,
+                    artist_uri: artistUri, // Usar el URI del artista
+                    release_year: releaseYear,
+                    cover_art: coverArtUrl,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    alert('Álbum registrado exitosamente.');
+                },
+                error: function(error) {
+                    console.error("Error al guardar el álbum: ", error);
+                }
+            });
+        }
+
         $(document).ready(function () {
             $('#searchButton').click(function () {
                 const query = $('#searchQuery').val();
@@ -189,28 +191,24 @@
                 }
             });
         });
-        $(document).on('submit', '#reviewForm', function(e) {
+
+        $(document).on('submit', '#agregarAlbumForm', function(e) {
             e.preventDefault();
-            const reviewText = $('#review').val();
+            const formData = $(this).serialize();
 
             $.ajax({
-                url: '/albumes/reviews', // Cambia esto a la ruta correcta para almacenar reseñas
+                url: $(this).attr('action'),
                 method: 'POST',
-                data: {
-                    review: reviewText,
-                    _token: $('meta[name="csrf-token"]').attr('content') 
-                },
+                data: formData,
                 success: function(response) {
-                    $('#reviewModal').modal('hide');
-                    alert('Reseña guardada con éxito.');
+                    $('#agregarAlbumModal').modal('hide');
+                    alert('Álbum agregado exitosamente.');
                 },
                 error: function(error) {
-                    console.error("Error al guardar la reseña: ", error);
-                    alert('Hubo un error al guardar la reseña.');
+                    console.error("Error al agregar el álbum: ", error);
                 }
             });
         });
     </script>
-    </main>
 </body>
 @endsection

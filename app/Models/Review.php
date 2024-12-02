@@ -10,6 +10,7 @@ class Review extends Model
         'album_id',
         'user_id',
         'review',
+        'rating',
     ];
 
     public function album()

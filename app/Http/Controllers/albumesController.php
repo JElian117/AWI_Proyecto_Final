@@ -20,7 +20,7 @@ class albumesController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'uri' => 'required|string',
-            'artist_id' => 'required|exists:artistas,id',
+            'artist_uri' => 'required|string',
             'release_year' => 'required|integer',
             'cover_art' => 'nullable|string',
         ]);
@@ -28,7 +28,7 @@ class albumesController extends Controller
         $nuevoAlbum = new Album();
         $nuevoAlbum->name = $request->name;
         $nuevoAlbum->uri = $request->uri;
-        $nuevoAlbum->artist_id = $request->artist_id;
+        $nuevoAlbum->artist_uri = $request->artist_uri;
         $nuevoAlbum->release_year = $request->release_year;
         $nuevoAlbum->cover_art = $request->cover_art;
         $nuevoAlbum->save();
@@ -47,7 +47,7 @@ class albumesController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'uri' => 'required|string',
-            'artist_id' => 'required|exists:artistas,id',
+            'artist_uri' => 'required|string',
             'release_year' => 'required|integer',
             'cover_art' => 'nullable|string',
         ]);
@@ -73,8 +73,8 @@ class albumesController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'uri' => 'required|string|unique:albums,uri', // Asegúrate de que sea único
-            'artist_id' => 'required|exists:artistas,id',
+            'uri' => 'required|string|unique:albums,uri',
+            'artist_uri' => 'required|string',
             'release_year' => 'required|integer',
             'cover_art' => 'nullable|string',
         ]);
@@ -90,25 +90,5 @@ class albumesController extends Controller
         );
 
         return response()->json($album); // Retorna el álbum creado o encontrado
-    }
-
-    public function storeReview(Request $request)
-    {
-        $request->validate([
-            'album_id' => 'required|exists:albums,id',
-            'review' => 'required|string|max:500',
-        ]);
-
-        // Obtener el usuario autenticado
-        $userId = auth()->id();
-
-        // Guardar la reseña
-        Review::create([
-            'album_id' => $request->album_id,
-            'user_id' => $userId,
-            'review' => $request->review,
-        ]);
-
-        return redirect()->back()->with('success', 'Reseña guardada con éxito.');
     }
 }

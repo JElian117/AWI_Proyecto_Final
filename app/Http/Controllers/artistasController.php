@@ -61,7 +61,7 @@ class artistasController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'uri' => 'required|string|unique:artistas,uri', // Asegúrate de que sea único
+            'uri' => 'required|string|unique:artistas,uri',
         ]);
 
         $artista = Artista::firstOrCreate(
