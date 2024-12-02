@@ -12,6 +12,9 @@
             <ul class="navbar-nav me-auto">
                 @if(Auth::user()->rol == 'admin')
                     <li class="nav-item">
+                        <a href="{{ route('search') }}" class="btn btn-outline-light text-black">Busca en Spotify</a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('usuarios.index') }}" class="btn btn-outline-light me-2 text-black">Ir a Usuarios</a>
                     </li>
                     <li class="nav-item">
@@ -21,7 +24,7 @@
                         <a href="{{ route('albumes.index') }}" class="btn btn-outline-light text-black">Ir a Álbumes</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('search') }}" class="btn btn-outline-light text-black">Buscar en Spotify</a>
+                        <a href="{{ route('reviews.index') }}" class="btn btn-outline-light text-black">Hacer Reseña</a>
                     </li>
                 @endif
             </ul>
