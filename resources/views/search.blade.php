@@ -75,7 +75,7 @@
                 success: function(artistResponse) {
                     // Luego guarda el álbum
                     $.ajax({
-                        url: '/api/albumes', // Cambia esto a la ruta correcta para almacenar álbumes
+                        url: '/albumes', // Cambia esto a la ruta correcta para almacenar álbumes
                         method: 'POST',
                         data: {
                             uri: albumUri,
@@ -86,12 +86,12 @@
                             _token: $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(albumResponse) {
-                            $('#albumId').val(albumResponse.id); // Asigna el ID del álbum guardado
-                            $('#reviewModal').modal('show'); // Mostrar el modal después de guardar el álbum
-                        },
-                        error: function(error) {
-                            console.error("Error al guardar el álbum: ", error);
-                        }
+                    $('#albumId').val(albumResponse.id); // Asigna el ID del álbum guardado
+                    $('#reviewModal').modal('show'); // Mostrar el modal después de guardar el álbum
+                },
+                error: function(error) {
+                    console.error("Error al guardar el álbum: ", error);
+                }
                     });
                 },
                 error: function(error) {
@@ -192,20 +192,16 @@
         $(document).on('submit', '#reviewForm', function(e) {
             e.preventDefault();
             const reviewText = $('#review').val();
-            const albumId = $('#albumId').val();
 
             $.ajax({
                 url: '/albumes/reviews', // Cambia esto a la ruta correcta para almacenar reseñas
                 method: 'POST',
                 data: {
                     review: reviewText,
-                    album_id: albumId, // Incluir el album_id
-                    user_id: '{{ auth()->id() }}', // Obtener el user_id del usuario autenticado
                     _token: $('meta[name="csrf-token"]').attr('content') 
                 },
                 success: function(response) {
                     $('#reviewModal').modal('hide');
-                    $('#review').val(''); // Limpiar el campo de reseña
                     alert('Reseña guardada con éxito.');
                 },
                 error: function(error) {
