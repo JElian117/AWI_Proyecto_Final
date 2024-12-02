@@ -37,15 +37,15 @@ class artistasController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|string|max:255', // Cambiado a 'name'
+            'name' => 'required|string|max:255', 
             'uri' => 'required|string',
-            'image_url' => 'nullable|string', // Cambiado a 'image_url'
+            'image_url' => 'nullable|string', 
         ]);
 
         $artista = Artista::find($id);
-        $artista->name = $request->name; // Cambiado a 'name'
+        $artista->name = $request->name; 
         $artista->uri = $request->uri;
-        $artista->image_url = $request->image_url; // Cambiado a 'image_url'
+        $artista->image_url = $request->image_url; 
         $artista->save();
 
         return redirect()->route('artistas.index')->with('success', 'Artista actualizado exitosamente.');
@@ -55,5 +55,20 @@ class artistasController extends Controller
         $artista = Artista::find($id);
         $artista->delete();
         return redirect()->back();
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'uri' => 'required|string|unique:artistas,uri', // Asegúrate de que sea único
+        ]);
+
+        $artista = Artista::firstOrCreate(
+            ['uri' => $request->uri],
+            ['name' => $request->name]
+        );
+
+        return response()->json($artista); // Retorna el artista creado o encontrado
     }
 }

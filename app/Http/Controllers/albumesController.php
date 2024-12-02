@@ -69,6 +69,29 @@ class albumesController extends Controller
         return redirect()->back();
     }
 
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'uri' => 'required|string|unique:albums,uri', // Asegúrate de que sea único
+            'artist_id' => 'required|exists:artistas,id',
+            'release_year' => 'required|integer',
+            'cover_art' => 'nullable|string',
+        ]);
+
+        $album = Album::firstOrCreate(
+            ['uri' => $request->uri],
+            [
+                'name' => $request->name,
+                'artist_id' => $request->artist_id,
+                'release_year' => $request->release_year,
+                'cover_art' => $request->cover_art,
+            ]
+        );
+
+        return response()->json($album); // Retorna el álbum creado o encontrado
+    }
+
     public function storeReview(Request $request)
     {
         $request->validate([
