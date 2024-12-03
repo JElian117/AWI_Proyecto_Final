@@ -69,7 +69,7 @@
                             <label for="rol" class="form-label">Rol</label>
                             <select class="form-select" id="rol" name="rol">
                                 <option value="reseñador">Reseñador</option>
-                                <option value="moderador">Moderador</option>
+                                <!--option value="moderador">Moderador</option--> <!-- Actualización final: Se aceptó la entrega porque cumple con lo escencial de CRUD's y uso de API, ya no se implementó lo de Moderador -->
                             </select>
                         </div>
                         <div class="form-group">

@@ -27,6 +27,12 @@
                         <a href="{{ route('reviews.index') }}" class="btn btn-outline-light text-black">Hacer Reseña</a>
                     </li>
                 @endif
+
+                @if(Auth::user()->rol == 'reseñador')
+                    <li class="nav-item">
+                        <a href="{{ route('reviews.index') }}" class="btn btn-outline-light text-black">Hacer Reseña</a>
+                    </li>
+                @endif
             </ul>
 
             <!-- Right Side Of Navbar -->
